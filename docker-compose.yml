@@ -1,0 +1,19 @@
+version: "3"
+
+services:
+  app:
+    build:
+      context: .
+    ports: 
+      - "8000:8000" # on va executer l'app ds le port 8000 de l'app dans le port 8000 de l'image
+    volumes: # permet de mettre a jour le container sans rebuild l'app en gros ce stocke l'app existante et si il y a un chgmnt alors ca va mettre a jour automatiquement 
+      - ./app:/app # sans pour autant rebuild l'app/  on veut mettre a jour notre app pour toute modif dans notre folder app 
+    command: >
+      sh -c "python manage.py runserver 0.0.0.0:8000" # on execute la commande qui permet de run le serveur localement
+      # sh = shell , -c executer et la command 
+
+
+#docker-compose run app sh -c "django-admin startproject app ." permet de creer un projet ds la dir choisie 
+# cette commande peut etre utiliser ds la dir en dessous de celle de docker compose 
+
+
