@@ -24,3 +24,11 @@ python code
 # it helps to find our problems faster 
 
 # then we commit our code and normally on travis-ci we should have our commit created 
+
+The goal of travis-ci is to run tests every time we push our coude into the gituhb repo
+
+# check breanches on travis-ci website if the code run et exited with 0 then erveything works fine 
+
+# command for running testcase 
+
+docker-compose run app sh -c "python manage.py test"
