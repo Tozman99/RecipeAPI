@@ -32,3 +32,5 @@ The goal of travis-ci is to run tests every time we push our coude into the gitu
 # command for running testcase 
 
 docker-compose run app sh -c "python manage.py test"
+
+# don't forget to start the name of the test function with a test otherwise the function won't work 

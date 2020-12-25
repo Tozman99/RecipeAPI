@@ -9,12 +9,38 @@ services:
     volumes: # permet de mettre a jour le container sans rebuild l'app en gros ce stocke l'app existante et si il y a un chgmnt alors ca va mettre a jour automatiquement 
       - ./app:/app # sans pour autant rebuild l'app/  on veut mettre a jour notre app pour toute modif dans notre folder app 
     command: >
-      sh -c "python manage.py runserver 0.0.0.0:8000" # on execute la commande qui permet de run le serveur localement
+      sh -c "python manage.py wait_for_db &&
+             python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000" # on execute la commande qui permet de run le serveur localement
       # sh = shell , -c executer et la command 
-
-
+      # we use our command wait_For_db and we migrate our change 
+    environment:
+    - DB_HOST=db
+    - DB_NAME=app
+    - DB_USER=postgres
+    - DB_PASS=supersecretpassword
+    depends_on:
+      - db
+  db:
+    image: postgres:10-alpine
+    environment:
+      - POSTGRES_DB=app
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=supersecretpassword
+ 
+#DB_HOST=db # the service that our app depends_on (The host is db)
+     # - DB_NAME=app # the name of the application (=service)
+      #- DB_USER=postgres # The name of the user = postgres
+      #- DB_PASS=thesecretpassword # The password 
+    #depends_on:
+     # - db # the depends_on means that the app service depends on our db   
+  
 #docker-compose run app sh -c "django-admin startproject app ." permet de creer un projet ds la dir choisie 
 # cette commande peut etre utiliser ds la dir en dessous de celle de docker compose 
 
 
 #Travis-ci helps us to create test 
+
+#__init__.py file is a file that used in django , 
+# we instantiate cause with this file django know that this folder 
+# is a python module 
