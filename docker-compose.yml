@@ -44,3 +44,9 @@ services:
 #__init__.py file is a file that used in django , 
 # we instantiate cause with this file django know that this folder 
 # is a python module 
+
+
+#  Pour les commandes qu'on utilise qu'une fois : on peut remove le container juste apres 
+# EX: pour la commande python manage.py startapp app_name
+# on peut supprimer le container juste apres pour garder de l'espace 
+# pour faire ca : apres le run app --rm sh -c "la commande "

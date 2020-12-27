@@ -26,6 +26,6 @@ class Command(BaseCommand):
                 self.stdout.write("Database is not available yet Wait 1 sec..")
                 time.sleep(1)
                 # it print into the terminal that msg and sleep the process 1 sec 
-
+        
         self.stdout.write(self.style.SUCCESS("Database is ready !"))
         # once the db_conne = True => our database is ready to go 
