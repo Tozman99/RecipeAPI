@@ -183,3 +183,4 @@ class PrivateUserApiTests(TestCase):
         self.assertEqual(self.user.name, payload["name"])
         # we check if the user password = the new password 
         self.assertTrue(self.user.check_password(payload["password"]))
+

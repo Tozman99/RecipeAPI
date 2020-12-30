@@ -34,3 +34,8 @@ The goal of travis-ci is to run tests every time we push our coude into the gitu
 docker-compose run app sh -c "python manage.py test"
 
 # don't forget to start the name of the test function with a test otherwise the function won't work 
+
+
+# it's important when I create a folder to add a __init__.py for example for tests 
+# otherwise django doesn't recognize the folder as a python module
+# and remove test.py file 
