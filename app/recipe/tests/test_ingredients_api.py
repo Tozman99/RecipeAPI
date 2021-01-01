@@ -6,7 +6,7 @@ from rest_framework.test import APIClient
 from rest_framework import status
 
 from core.models import Ingredient
-from recipe.serializers import IngredientSerializer
+from .serializers import IngredientSerializer
 
 
 INGREDIENTS_URL = reverse("recipe:ingredient-list")
@@ -79,5 +79,28 @@ class PrivateIngredientApiTests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data[0]["name"], ingredient.name)
         self.assertEqual(len(res.data), 1)
+
+    def test_create_ingredient_successful(self):
+        """Test that an ingredient is created """
+
+        payload = {"name": "Cucumber"}
+
+        res = self.client.post(INGREDIENTS_URL, payload)
+        exist = Ingredient.objects.filter(user=self.user, 
+                                          name=payload["name"]).exists()
+        
+        self.assertTrue(exist)
+
+    def test_create_ingredient_invalid(self):
+        """Test Creating invalid ingredient"""
+
+        payload = {"name": ""}
+        res = self.client.post(INGREDIENTS_URL, payload["name"])
+
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+
+
 
     

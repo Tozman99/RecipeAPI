@@ -33,7 +33,7 @@ class PrivateTagsApiTests(TestCase):
 
         self.client = APIClient()
         self.user = get_user_model().objects.create_user(
-            "londondev@londonappdev.com", 
+            "KarimS@gmail.com", 
             "testpass"
             )
         self.client.force_authenticate(self.user)
@@ -58,7 +58,7 @@ class PrivateTagsApiTests(TestCase):
         # one to see the tag 
         # 
         user2 = get_user_model().objects.create_user(
-            'other@londonappdev.com',
+            'other@gmail.com',
             'testpass'
         )
         Tag.objects.create(user=user2, name='Fruity')
@@ -87,3 +87,4 @@ class PrivateTagsApiTests(TestCase):
         payload = {"name": ""}
         res = self.client.post(TAGS_URL, payload)
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
