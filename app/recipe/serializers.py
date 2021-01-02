@@ -30,3 +30,11 @@ class RecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = ["title", "time_minutes", "price", "user", "link", "tags", "ingredients"]
+
+
+class RecipeDetailSerializer(RecipeSerializer):
+    # we inherit from RecipeSerializer so our meta class has been already created 
+    # thoses attr in the meta class are used 
+
+    ingredients = IngredientSerializer(many=True, read_only=True)
+    tags = TagSerializer(many=True, read_only=True)

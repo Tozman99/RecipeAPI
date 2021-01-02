@@ -50,3 +50,13 @@ class RecipeViewSet(viewsets.ModelViewSet):
         """Return filtered queryset based on user"""
         return Recipe.objects.filter(user=self.request.user)
 
+    def get_serializer_class(self):
+        """Return the serializer class , We can use several actions in order 
+        To get different serializer class and here we 'll use the retrieve action"""
+
+        if self.action == "retrieve":
+            # we can retrieve a single recipe object 
+            return serializers.RecipeDetailSerializer
+        
+        return self.serializer_class
+

@@ -5,12 +5,25 @@ from django.contrib.auth import get_user_model
 from rest_framework.test import APIClient
 from rest_framework import status
 
-from core.models import Recipe
+from core.models import Recipe, Tag, Ingredient
 
-from ..serializers import RecipeSerializer
+from ..serializers import RecipeSerializer, RecipeDetailSerializer
 
 
 RECIPES_URL = reverse("recipe:recipe-list")
+
+def sample_tag(user, name="Default Tag Name"):
+    """Create a new tag """
+    return Tag.objects.create(user=user, name=name)
+
+def sample_ingredient(user, name="Cucumber"):
+    """Create a new ingredient"""
+    return Ingredient.objects.create(user=user, name=name)
+
+def get_detailed_url(recipe_id):
+    """Return the url for every recipe id """
+    # return the kind of url : /api/recipe/recipe_id
+    return reverse("recipe:recipe-detail", args=[recipe_id])
 
 def sample_recipe(user, **params):
     """ Create a sample recipe """
@@ -88,5 +101,20 @@ class PrivateRecipeTests(TestCase):
         self.assertEqual(len(res.data), 1)
         self.assertEqual(res.data, serializer.data)
 
+    def test_view_recipe_detail(self):
+        """Test viewing recipe detail view """
+
+        recipe = sample_recipe(user=self.user)
+        # with a many to many field we use the add function in order 
+        # to add new objects in those fields
+        recipe.tags.add(sample_tag(user=self.user))
+        recipe.ingredients.add(sample_ingredient(user=self.user))
+
+        url = get_detailed_url(recipe.id)
+        res = self.client.get(url)
+        serializer = RecipeDetailSerializer(recipe)
+
+        self.assertEqual(res.data, serializer.data)
+        
 
         
