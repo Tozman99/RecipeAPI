@@ -115,6 +115,109 @@ class PrivateRecipeTests(TestCase):
         serializer = RecipeDetailSerializer(recipe)
 
         self.assertEqual(res.data, serializer.data)
-        
+    
+    def test_create_basic_recipe(self):
+        """Test creating recipe"""
+        # we check if our object created is legit cause we check if payload has the same attr/key
+        # as the Recipe model 
 
+        payload = {
+            'title': 'Test recipe',
+            'time_minutes': 30,
+            'price': 10.00,
+        }
+        res = self.client.post(RECIPES_URL, payload)
+
+        recipe = Recipe.objects.get(id=res.data['id'])
+        for key in payload.keys():
+            self.assertEqual(payload[key], getattr(recipe, key))
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+
+    def test_create_recipe_with_tags(self):
+        """Test creating a recipe with tags"""
+        tag1 = sample_tag(user=self.user, name='Tag 1')
+        tag2 = sample_tag(user=self.user, name='Tag 2')
+        payload = {
+            'title': 'Test recipe with two tags',
+            'tags': [tag1.id, tag2.id],
+            'time_minutes': 30,
+            'price': 10.00
+        }
+        res = self.client.post(RECIPES_URL, payload)
+
+        recipe = Recipe.objects.get(id=res.data['id'])
+        tags = recipe.tags.all()
+        self.assertEqual(tags.count(), 2)
+        self.assertIn(tag1, tags)
+        self.assertIn(tag2, tags)
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+
+
+    def test_create_recipe_with_ingredients(self):
+        """Test creating recipe with ingredients"""
+        ingredient1 = sample_ingredient(user=self.user, name='Ingredient 1')
+        ingredient2 = sample_ingredient(user=self.user, name='Ingredient 2')
+        payload = {
+            'title': 'Test recipe with ingredients',
+            'ingredients': [ingredient1.id, ingredient2.id],
+            'time_minutes': 45,
+            'price': 15.00
+        }
+
+        res = self.client.post(RECIPES_URL, payload)
+
+        recipe = Recipe.objects.get(id=res.data['id'])
+        ingredients = recipe.ingredients.all()
+        self.assertEqual(ingredients.count(), 2)
+        self.assertIn(ingredient1, ingredients)
+        self.assertIn(ingredient2, ingredients)
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+
+
+    def test_partial_update_recipe(self):
+        """Test updating a recipe with patch """
+        # this'll test if we can modify partially a recipe object 
+
+        recipe = sample_recipe(user=self.user)
+        recipe.tags.add(sample_tag(user=self.user))
+        new_tag = sample_tag(user=self.user, name="Vegan")
+
+        payload = {
+            "title":"Best salad",
+            "tags": [new_tag.id]
+        }
+        detailed_url = get_detailed_url(recipe.id)
+        res = self.client.patch(detailed_url, payload)
+        #https://docs.djangoproject.com/en/3.1/ref/models/instances/#refreshing-objects-from-database
+        recipe.refresh_from_db()
+
+        self.assertEqual(recipe.title, payload["title"])
+        tags = recipe.tags.all()
+        self.assertEqual(len(tags), 1)
+        self.assertIn(new_tag, tags)
+
+    def test_full_update_recipe(self):
+        """Test updating a recipe with put"""
+        # with the put method we update the full object 
+        # so if we don't provide some fields then there are considered as blank
+        recipe = sample_recipe(user=self.user)
+        recipe.tags.add(sample_tag(user=self.user))
+
+        payload = {
+                'title': 'Spaghetti',
+                'time_minutes': 25,
+                'price': 5.00
+        }
+        url = get_detailed_url(recipe.id)
+        self.client.put(url, payload)
+        # we don't provide ingredients and tags so they are empty list
+        
+        recipe.refresh_from_db()
+        self.assertEqual(recipe.title, payload['title'])
+        self.assertEqual(recipe.time_minutes, payload['time_minutes'])
+        self.assertEqual(recipe.price, payload['price'])
+        tags = recipe.tags.all()
+        self.assertEqual(len(tags), 0)
+        # we chekck that tags are empty  cause we haven't provided this field in the payload 
+        
         

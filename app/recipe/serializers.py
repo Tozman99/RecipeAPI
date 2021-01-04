@@ -24,8 +24,8 @@ class IngredientSerializer(serializers.ModelSerializer):
 class RecipeSerializer(serializers.ModelSerializer):
     """Serializer for recipe"""
 
-    ingredients = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    tags = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    ingredients = serializers.PrimaryKeyRelatedField(queryset=Ingredient.objects.all(), many=True)
+    tags = serializers.PrimaryKeyRelatedField(queryset=Tag.objects.all(), many=True)
 
     class Meta:
         model = Recipe
@@ -34,7 +34,7 @@ class RecipeSerializer(serializers.ModelSerializer):
 
 class RecipeDetailSerializer(RecipeSerializer):
     # we inherit from RecipeSerializer so our meta class has been already created 
-    # thoses attr in the meta class are used 
+    # thoses attr in the meta class are used
 
     ingredients = IngredientSerializer(many=True, read_only=True)
     tags = TagSerializer(many=True, read_only=True)
